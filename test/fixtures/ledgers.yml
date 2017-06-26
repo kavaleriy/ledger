@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  customer: MyString
+  current_acc: MyString
+  credit_acc: MyString
+  sc_addr: MyString
+
+two:
+  customer: MyString
+  current_acc: MyString
+  credit_acc: MyString
+  sc_addr: MyString

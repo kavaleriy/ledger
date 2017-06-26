@@ -1,0 +1,32 @@
+%h1 Blockchain Agreement Management System
+
+%table.table
+  %thead
+    %tr
+      %th Customer
+      %th Current acc
+      %th Credit acc
+      %th Owner
+      %th Sc addr
+      %th
+      %th
+
+  %tbody
+    - @ledgers.each do |ledger|
+      %tr
+        %td= ledger.customer
+        %td= ledger.current_acc
+        %td= ledger.credit_acc
+        %td= ledger.owner
+        %td
+          -if ledger.sc_addr.blank?
+            = link_to 'Create Smart Contract', ledger_path(ledger), class: "btn btn-warning"
+          -else
+            = link_to 'Back payment', ledger_path(ledger), class: "btn btn-danger"
+        %td= link_to 'Edit', edit_ledger_path(ledger)
+
+        %td= link_to 'Destroy', ledger, method: :delete, data: { confirm: 'Are you sure?' }
+
+
+%br
+= link_to 'New Agreement', new_ledger_path, class: "btn btn-primary"

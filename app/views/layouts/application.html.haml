@@ -1,0 +1,23 @@
+!!! 5
+%html(lang='en')
+%head
+
+  %title Comics
+  = stylesheet_link_tag    'application'
+  = javascript_include_tag 'application'
+
+  = stylesheet_link_tag "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+
+  = javascript_include_tag "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+
+  = csrf_meta_tags
+
+%body
+
+.container
+  .pull-left
+    =image_tag("RaiffeisenBankInternational.jpg", "id" => "bank_logo")
+
+.container
+  .content
+    = yield

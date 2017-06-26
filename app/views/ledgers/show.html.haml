@@ -1,0 +1,105 @@
+%p#notice= notice
+
+%p
+  %b.col-xs-3 Customer:
+  = @ledger.customer
+%p
+  %b.col-xs-3 Current acc:
+  = @ledger.current_acc
+%p
+  %b.col-xs-3 Credit acc:
+  = @ledger.credit_acc
+%p
+  %b.col-xs-3 Agreement owner:
+  = @ledger.owner
+
+%p
+  %b.col-xs-3 Sc addr:
+  #sc_addr
+    Web3.js: Communicating with Ethereum network.....
+
+
+= link_to 'Back', ledgers_path, class: "btn pull-right"
+
+
+:javascript
+
+  $(document).ready(function() {
+    var ledger_id = "#{@ledger.id}"
+    var customer = "#{@ledger.customer}"
+    var current_acc = "#{@ledger.current_acc}"
+    var credit_acc = "#{@ledger.credit_acc}"
+
+    var owner = $("#bank_id").val()
+
+    setTimeout(function() {
+      make_me_smart(customer, current_acc, credit_acc, owner);
+    }, 1000);
+
+    function make_me_smart(customer, current_acc, credit_acc, owner) {
+
+      var url = "http://aaammyvag.westeurope.cloudapp.azure.com:8545";
+      var ownerAddress = '0x2A511ffd046759b34b89A41381b782676367Ad39';
+
+      var web3 = new Web3(new Web3.providers.HttpProvider(url));
+      console.log(url);
+      console.log(web3.eth.accounts);
+
+
+      var CreateAgreementsContractJson = {};
+
+      $.getJSON('/CreateAgreements.json', function(json) {
+          CreateAgreementsContractJson = json;
+
+          var CreateAgreementsContract = web3.eth.contract(CreateAgreementsContractJson.abi).at(ownerAddress);
+          var depositAccount = current_acc;
+          var creditAccount = credit_acc;
+          CreateAgreementsContract.createPledgeAgreement.estimateGas(
+              depositAccount,
+              creditAccount,
+              {from: ownerAddress},
+              function (err, result) {
+                  if (err) {
+                    show_scaddr(err.toString())
+                    throw err;
+                  } else {
+                      var myGasNum = result;
+
+                      CreateAgreementsContract.createPledgeAgreement.sendTransaction(
+                          depositAccount,
+                          creditAccount,
+                          {from: ownerAddress, gas: myGasNum},
+                          function(err, result){
+                              if(err) {
+                                show_scaddr(err.toString())
+                                throw err;
+                              } else {
+                                update_scaddr(result)
+                                show_scaddr(result)
+                                alert("GuestBook signed! TXID : " + result);
+                              }
+                          });
+                  }
+              });
+      });
+    }
+
+    function update_scaddr(sc_addr) {
+      var url = "#{ledger_url(@ledger.id)}"
+      console.log(url)
+      $.ajax({
+                type: "POST",
+                url: url,
+                data: { _method:'PUT', ledger: {sc_addr: sc_addr} },
+                dataType: 'json',
+                success: function(msg) {
+                  show_scaddr(sc_addr)
+                  alert("Contract is created!");
+                }
+      });    }
+
+      function show_scaddr(sc_addr) {
+        $('#sc_addr').text(sc_addr)
+      }
+
+  })

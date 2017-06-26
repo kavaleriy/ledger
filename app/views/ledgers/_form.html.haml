@@ -1,0 +1,25 @@
+= form_for @ledger do |f|
+  - if @ledger.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@ledger.errors.count, "error")} prohibited this ledger from being saved:"
+      %ul
+        - @ledger.errors.full_messages.each do |message|
+          %li= message
+
+  .field.form-group
+    = f.label :customer
+    = f.text_field :customer, class: "form-control"
+  .field.form-group
+    = f.label :current_acc
+    = f.text_field :current_acc, class: "form-control"
+  .field.form-group
+    = f.label :credit_acc
+    = f.text_field :credit_acc, class: "form-control"
+  .field.form-group
+    = f.label :owner
+    = f.select :owner, options_for_select([{ id: "AVAL", name: "AVAL"}, { id: "EBRR", name: "EBRR"}].collect{ |u| [ u[:name], u[:id] ] }), {class: "form-control"}
+  .field.form-group
+    = f.label :sc_addr
+    = f.text_field :sc_addr, class: "form-control"
+  .actions
+    = f.submit 'Save', class: "btn"
